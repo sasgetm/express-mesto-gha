@@ -1,7 +1,8 @@
 const Card = require('../models/card');
 const err500 = "На сервере произошла ошибка. ";
-const err400 = "Переданы некорректные данные при создании карточки. ";
+const err400 = "Переданы некорректные данные.";
 const err404 = "Передан несуществующий _id карточки";
+const errCreateCard = "Переданы некорректные данные при создании карточки. ";
 const errLikeCard = "Переданы некорректные данные для постановки лайка";
 const errDislikeCard = "Переданы некорректные данные для снятия лайка";
 
@@ -19,7 +20,7 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: err400 + err.name + ': ' + err.message });
+        res.status(400).send({ message: errCreateCard + err.name + ': ' + err.message });
         return;
       }
       res.status(500).send({ message: err500 + err.name + ":" + err.message })
@@ -38,6 +39,10 @@ module.exports.deleteCard = (req, res) => {
       res.status(200).send({ data: card });
     })
     .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: err400 });
+        return;
+      }
       res.status(500).send({ message: err500 + err.name + ":" + err.message });
     });
 };
