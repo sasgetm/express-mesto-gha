@@ -1,11 +1,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
 
 const { PORT = 3000 } = process.env;
 const app = express();
 
 const err404 = 'Запрашиваемый ресурс не найден';
+
+app.use(helmet());
 
 app.use((req, res, next) => {
   req.user = {
@@ -23,7 +26,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-app.use('*', (req, res) => {res.status(404).send({ message: err404 });})
+app.use('*', (req, res) => { res.status(404).send({ message: err404 }); });
 
 app.listen(PORT, () => {
   console.log('Сервер запущен');
